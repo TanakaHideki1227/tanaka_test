@@ -380,6 +380,8 @@ button.secondary:hover {
   border-top: 1px solid #e2e8f0;
   display: flex;
   justify-content: flex-end;
+  position: relative;
+  z-index: 2;
 }
 .form-actions--compact {
   margin-top: 18px;

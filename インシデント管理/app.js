@@ -289,11 +289,14 @@ function field(key, label, type, opts = [], value = "", optionLabel = (o) => o |
 function typeField(k, l, t) {
   if (t === "textarea") return `<label class="field full"><span class="field-label">${l}</span><textarea id="cf-${k}"></textarea></label>`;
   if (t === "checkbox") return `<label class="field field-inline"><span class="field-label">${l}</span><input id="cf-${k}" type="checkbox" /></label>`;
+  if (t === "number") return `<label class="field"><span class="field-label">${l}</span><input id="cf-${k}" type="number" step="any" inputmode="decimal" /></label>`;
   return `<label class="field"><span class="field-label">${l}</span><input id="cf-${k}" type="${t}"/></label>`;
 }
 
 function renderIncidentForm() {
-  byId("incidentForm").innerHTML = `
+  const form = byId("incidentForm");
+  form.noValidate = true;
+  form.innerHTML = `
     <div class="panel-card create-panel">
       <div class="panel-head">
         <h2 class="panel-title">新規インシデント起票</h2>
@@ -326,18 +329,32 @@ function renderIncidentForm() {
   };
   typeEl.onchange = renderTypeFields;
   renderTypeFields();
-  byId("incidentForm").onsubmit = async (e) => {
+  form.onsubmit = async (e) => {
     e.preventDefault();
-    await createIncident();
+    try {
+      await createIncident();
+    } catch (err) {
+      console.error(err);
+      alert(err && err.message ? err.message : String(err));
+    }
   };
 }
 
 async function createIncident() {
+  const me = currentUser();
+  if (!me) {
+    alert("ログインユーザーが未設定です。画面上部でユーザーを選択してください。");
+    return;
+  }
   const type = byId("f-type").value;
   const custom = {};
-  (typeFields[type] || []).forEach(([k, _l, t]) => {
-    custom[k] = t === "checkbox" ? byId(`cf-${k}`).checked : byId(`cf-${k}`).value;
-  });
+  for (const [k, _l, t] of typeFields[type] || []) {
+    const el = byId(`cf-${k}`);
+    if (!el) {
+      throw new Error(`フォーム項目が見つかりません: ${k}。種別を一度切り替えてから再度お試しください。`);
+    }
+    custom[k] = t === "checkbox" ? el.checked : el.value;
+  }
   const payload = {
     title: byId("f-title").value.trim(),
     description: byId("f-description").value.trim(),
@@ -345,7 +362,7 @@ async function createIncident() {
     priority: byId("f-priority").value,
     status: byId("f-status").value,
     isConfidential: byId("f-isConfidential").checked,
-    reporterId: currentUser().id,
+    reporterId: me.id,
     assigneeId: byId("f-assigneeId").value || "",
     occurredAt: byId("f-occurredAt").value,
     cause: byId("f-cause").value.trim(),
@@ -353,9 +370,26 @@ async function createIncident() {
     allowedUserIds: [...byId("f-allowedUserIds").selectedOptions].map((o) => o.value),
     customFields: custom
   };
-  if (!payload.title || !payload.description || !payload.occurredAt) return alert("必須項目を入力してください。");
+  if (!payload.title) {
+    alert("タイトルを入力してください。");
+    return;
+  }
+  if (!payload.description) {
+    alert("説明を入力してください。");
+    return;
+  }
+  if (!payload.occurredAt) {
+    alert("発生日時を選択してください。");
+    return;
+  }
+  const dt = byId("f-occurredAt");
+  if (typeof dt.checkValidity === "function" && !dt.checkValidity()) {
+    alert("発生日時の形式が正しくありません。日付と時刻を選び直してください。");
+    return;
+  }
   await api("/api/incidents", { method: "POST", body: JSON.stringify(payload) });
   await refreshAndRender();
+  alert("起票しました。");
 }
 
 async function openIncidentModal(id) {
