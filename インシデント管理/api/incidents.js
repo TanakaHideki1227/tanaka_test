@@ -1,4 +1,4 @@
-const { rest, sendJson, parseBody } = require("./_lib/supabase");
+const { rest, sendJson, parseBody } = require("../lib/supabase");
 
 async function nextIncidentId() {
   const rows = await rest("incidents?select=id&order=id.desc&limit=1");

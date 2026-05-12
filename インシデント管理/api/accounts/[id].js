@@ -1,4 +1,4 @@
-const { rest, sendJson } = require("../_lib/supabase");
+const { rest, sendJson } = require("../../lib/supabase");
 
 module.exports = async function handler(req, res) {
   try {

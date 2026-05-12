@@ -1,4 +1,4 @@
-const { rest, sendJson, parseBody } = require("../_lib/supabase");
+const { rest, sendJson, parseBody } = require("../../lib/supabase");
 
 function addHistory(incident, field, next, actorId) {
   const before = incident[field] || "";
