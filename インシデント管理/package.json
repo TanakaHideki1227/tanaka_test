@@ -4,6 +4,9 @@
   "private": true,
   "description": "インシデント管理ツール (Supabase + Vercel)",
   "main": "index.html",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "vercel dev"
   }
