@@ -51,9 +51,20 @@ async function api(path, options = {}) {
     ...options,
     headers: { "Content-Type": "application/json", ...(options.headers || {}) }
   });
-  if (!res.ok) throw new Error(await res.text());
+  const text = await res.text();
+  if (!res.ok) {
+    let msg = text;
+    try {
+      const j = JSON.parse(text);
+      if (j && typeof j.error === "string") msg = j.error;
+    } catch {
+      /* そのまま */
+    }
+    throw new Error(msg || `HTTP ${res.status}`);
+  }
   if (res.status === 204) return null;
-  return res.json();
+  if (!text) return null;
+  return JSON.parse(text);
 }
 
 async function init() {
@@ -558,8 +569,24 @@ byId("modal").addEventListener("click", (e) => {
   if (e.target.id === "modal") byId("modal").classList.add("hidden");
 });
 
+function initFailureHint(message) {
+  const m = String(message || "");
+  if (window.location.protocol === "file:") {
+    return "このHTMLを直接開いています。VercelのURLで開くか、ローカルでは vercel dev で起動してください。";
+  }
+  if (/Failed to parse URL|sb_publishable|URLとして解釈|キーが入っています|publishable キー|正しい Project URL/i.test(m)) {
+    return "Vercel の SUPABASE_URL には、Supabase の「Project URL」（https://xxxx.supabase.co）だけを入れてください。sb_publishable_ で始まる値はキーなので URL 用ではありません。service_role は SUPABASE_SERVICE_ROLE_KEY に入れます。修正後は必ず Redeploy してください。";
+  }
+  if (/SUPABASE|Environment Variables|service_role|NEXT_PUBLIC_SUPABASE/i.test(m)) {
+    return "Vercel → Project → Settings → Environment Variables に、Supabase の Project URL と service_role キーを登録してください（名前は SUPABASE_URL と SUPABASE_SERVICE_ROLE_KEY）。保存後、Deployments から Redeploy が必要です。";
+  }
+  if (/404|Not Found|Cannot GET/i.test(m)) {
+    return "API が見つかりません。Vercel の Root Directory を「インシデント管理」フォルダに合わせているか確認してください。";
+  }
+  return m;
+}
+
 init().catch((e) => {
   console.error(e);
-  const url = API_BASE || window.location.origin;
-  alert(`初期化に失敗しました。${url} でサーバーを起動してください。`);
+  alert(`初期化に失敗しました。\n\n${initFailureHint(e.message)}`);
 });
