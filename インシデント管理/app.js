@@ -36,17 +36,11 @@ let sortDir = "desc";
 const byId = (id) => document.getElementById(id);
 const fmt = (s) => (s ? new Date(s).toLocaleString("ja-JP") : "-");
 
-/** 同一オリジン上の API までのプレフィックス（例: リポジトリ直下デプロイ時は /インシデント管理）。file:// 時はローカルサーバーURL。 */
-function computeAppBasePrefix() {
-  if (window.location.protocol === "file:") return "http://localhost:3000";
-  let p = window.location.pathname.replace(/\/+$/, "") || "/";
-  if (p.endsWith("/index.html")) {
-    p = p.slice(0, -"/index.html".length) || "/";
-  }
-  if (p !== "/" && p !== "") return p;
-  return "";
+/** Vercel の Serverless は常にサイト直下の /api/*。file:// のみローカルサーバー向け。 */
+function apiUrl(path) {
+  if (window.location.protocol === "file:") return `http://localhost:3000${path}`;
+  return path;
 }
-const APP_BASE = computeAppBasePrefix();
 const currentUser = () => state.users.find((u) => u.id === state.currentUserId);
 const canSee = (inc, user = currentUser()) =>
   !inc.isConfidential ||
@@ -56,11 +50,6 @@ const canSee = (inc, user = currentUser()) =>
   (inc.allowedUserIds || []).includes(user.id);
 const canEditConfidentialFlag = (inc, user = currentUser()) =>
   user.role === "admin" || inc.reporterId === user.id || inc.assigneeId === user.id;
-
-function apiUrl(path) {
-  if (APP_BASE.startsWith("http")) return `${APP_BASE}${path}`;
-  return `${APP_BASE}${path}`;
-}
 
 async function api(path, options = {}) {
   const res = await fetch(apiUrl(path), {
@@ -591,7 +580,7 @@ function initFailureHint(message) {
     return "このHTMLを直接開いています。VercelのURLで開くか、ローカルでは vercel dev で起動してください。";
   }
   if (/404|NOT_FOUND|Not Found|Cannot GET/i.test(m)) {
-    return "ページまたは API が見つかりません。Vercel の Root Directory を「インシデント管理」にするか、リポジトリ直下の index.html からツールへ進んでください。";
+    return "ページまたは API が見つかりません。Vercel の Root Directory を「リポジトリのルート（空欄）」にし、再デプロイしてください。インシデント管理だけを Root にすると /api が動きません。";
   }
   if (/Failed to parse URL|sb_publishable|URLとして解釈|キーが入っています|publishable キー|正しい Project URL/i.test(m)) {
     return "Vercel の SUPABASE_URL には、Supabase の「Project URL」（https://xxxx.supabase.co）だけを入れてください。sb_publishable_ で始まる値はキーなので URL 用ではありません。service_role は SUPABASE_SERVICE_ROLE_KEY に入れます。修正後は必ず Redeploy してください。";

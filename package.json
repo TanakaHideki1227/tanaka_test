@@ -1,0 +1,11 @@
+{
+  "name": "tanaka-test-monorepo",
+  "private": true,
+  "description": "Vercel Root Directory はリポジトリルート（空欄）。ローカルは npm run dev",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "vercel dev"
+  }
+}

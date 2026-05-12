@@ -24,9 +24,9 @@
     <p><a href="./インシデント管理/index.html">インシデント管理ツールを開く</a></p>
     <hr />
     <p>
-      <strong>推奨（Vercel）</strong><br />
-      Project → Settings → General → <strong>Root Directory</strong> を
-      <code>インシデント管理</code> にすると、トップ URL（<code>/</code>）だけでツールが表示されます。
+      <strong>Vercel の設定（重要）</strong><br />
+      Project → Settings → General → <strong>Root Directory は空（リポジトリのルート）のまま</strong>にしてください。<br />
+      API（<code>/api/*</code>）はリポジトリ直下の <code>api/</code> にあります。<code>インシデント管理</code> だけを Root にすると API がデプロイされずエラーになります。
     </p>
   </body>
 </html>
