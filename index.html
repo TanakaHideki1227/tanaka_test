@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tetris</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="panel left">
+      <h1>TETRIS</h1>
+      <div class="box">
+        <h2>HOLD</h2>
+        <canvas id="hold" width="120" height="120"></canvas>
+      </div>
+      <div class="box controls">
+        <h2>操作</h2>
+        <ul>
+          <li>← / → : 移動</li>
+          <li>↓ : ソフトドロップ</li>
+          <li>↑ / X : 右回転</li>
+          <li>Z : 左回転</li>
+          <li>Space : ハードドロップ</li>
+          <li>C : ホールド</li>
+          <li>P : 一時停止</li>
+          <li>R : リスタート</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="board-wrap">
+      <canvas id="board" width="300" height="600" aria-label="tetris board"></canvas>
+      <div id="overlay" class="overlay hidden">
+        <p id="overlay-text"></p>
+      </div>
+    </section>
+
+    <section class="panel right">
+      <div class="box">
+        <h2>NEXT</h2>
+        <canvas id="next" width="120" height="360"></canvas>
+      </div>
+      <div class="box status">
+        <h2>STATUS</h2>
+        <p>Score: <span id="score">0</span></p>
+        <p>Lines: <span id="lines">0</span></p>
+        <p>Level: <span id="level">1</span></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="./script.js"></script>
+</body>
+</html>
