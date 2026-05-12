@@ -1,0 +1,68 @@
+{
+  "seq": 3,
+  "settings": {
+    "slackChannel": "#incident-general",
+    "slackSecretChannel": "#incident-secret"
+  },
+  "notifications": [
+    {
+      "id": "bcb0f8d6-4bf1-44d9-b806-23d873fb69dd",
+      "type": "assign",
+      "message": "担当者アサイン: INC-0003",
+      "channel": "in-app",
+      "createdAt": "2026-05-12T09:44:30.248Z"
+    },
+    {
+      "id": "931b2187-a3fb-443d-b884-9f402379cf38",
+      "type": "new_incident",
+      "message": "新規起票: INC-0003 API???",
+      "channel": "#incident-general",
+      "createdAt": "2026-05-12T09:44:30.248Z"
+    },
+    {
+      "id": "df8bde7a-974e-4cf1-a582-23118200c75c",
+      "type": "account_created",
+      "message": "アカウント登録: ??",
+      "channel": "mail",
+      "createdAt": "2026-05-12T09:44:30.100Z"
+    }
+  ],
+  "accounts": [
+    {
+      "id": "u1",
+      "name": "田中",
+      "email": "tanaka@example.com",
+      "role": "admin",
+      "createdAt": "2026-05-12T09:44:16.796Z"
+    },
+    {
+      "id": "u3",
+      "name": "??",
+      "email": "yamada@example.com",
+      "role": "user",
+      "createdAt": "2026-05-12T09:44:30.089Z"
+    }
+  ],
+  "incidents": [
+    {
+      "id": "INC-0003",
+      "title": "API???",
+      "description": "????",
+      "type": "IT??",
+      "priority": "?",
+      "status": "???",
+      "isConfidential": false,
+      "reporterId": "u1",
+      "assigneeId": "",
+      "occurredAt": "2026-05-12T09:00:00.000Z",
+      "createdAt": "2026-05-12T09:44:30.244Z",
+      "closedAt": "",
+      "cause": "",
+      "prevention": "",
+      "allowedUserIds": [],
+      "customFields": {},
+      "comments": [],
+      "history": []
+    }
+  ]
+}

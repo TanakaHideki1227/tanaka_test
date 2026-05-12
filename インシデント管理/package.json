@@ -1,0 +1,10 @@
+{
+  "name": "incident-manager",
+  "version": "1.2.0",
+  "private": true,
+  "description": "インシデント管理ツール (Supabase + Vercel)",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev"
+  }
+}
